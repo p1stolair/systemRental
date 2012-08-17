@@ -12,7 +12,7 @@ public class Rental {
     //variabel yang ada untuk entitas sama dengan yang di database
 
     //entitas tabel dvd
-    private int kodedvd;
+    private String kodedvd;
     private String judul;
     private String dvddate;
     private String genre;
@@ -32,20 +32,24 @@ public class Rental {
     private String namapeg;
     private String alamatpeg;
     private String telppeg;
+    private String datepeg;
+    private String jkpeg;
+    private String passpeg;
+    private String levelpeg;
     
     //entitas pembantu
     private int kode;
-    private String charmem;
-    private int nomem;
-
+    private String user;
+    private String pass;
+    private String userlog;
     
 //method untuk entitas dvd
     
-    public int getKodedvd() {
+    public String getKodedvd() {
         return kodedvd;
     }
 
-    public void setKodedvd(int kodedvd) {
+    public void setKodedvd(String kodedvd) {
         this.kodedvd = kodedvd;
     }
     
@@ -99,21 +103,6 @@ public class Rental {
         this.kode = kode;
     }
 
-
-    public void setCharmem(String charmem) {
-        this.charmem = charmem;
-    }
-    public String getCharmem() {
-        return charmem;
-    }
-    public void setNomem(int nomem) {
-        this.nomem = nomem;
-    }
-    public int getNomem() {
-        return nomem;
-    }
-   
-
 //method untuk entitas member
     
     public String getKodemem() {
@@ -162,6 +151,86 @@ public class Rental {
 
     public void setJK(String jk) {
         this.jk = jk;
+    }
+    
+//method untuk entitas pegawai
+    
+    public String getKodepeg() {
+        return kodepeg;
+    }
+    
+    public void setKodepeg(String kodepeg) {
+        this.kodepeg = kodepeg;
+    }
+    
+    public String getNamapeg() {
+        return namapeg;
+    }
+    
+    public void setNamapeg(String namapeg) {
+        this.namapeg = namapeg;
+    }
+    
+    public String getAlamatpeg() {
+        return alamatpeg;
+    }
+
+    public void setAlamatpeg(String alamatpeg) {
+        this.alamatpeg = alamatpeg;
+    }
+    
+    public String getTelppeg() {
+        return telppeg;
+    }
+
+    public void setTelppeg(String telppeg) {
+        this.telppeg = telppeg;
+    }
+    
+    public String getDatepeg() {
+        return datepeg;
+    }
+
+    public void setDatepeg(String datepeg){
+        this.datepeg = datepeg;
+    }
+    
+    public String getJKPeg() {
+        return jkpeg;
+    }
+
+    public void setJKPeg(String jkpeg) {
+        this.jkpeg = jkpeg;
+    }
+    
+    public String getPasspeg() {
+        return passpeg;
+    }
+
+    public void setPasspeg(String passpeg) {
+        this.passpeg = passpeg;
+    }
+    
+    public String getLevelpeg() {
+        return levelpeg;
+    }
+
+    public void setLevelpeg(String levelpeg) {
+        this.levelpeg = levelpeg;
+    }
+    
+//method login user
+    public void setUser(String user) {
+        this.user = user;
+    }
+    public String getUser() {
+        return user;
+    }
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+    public String getPass() {
+        return pass;
     }
     
 }

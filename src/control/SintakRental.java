@@ -33,11 +33,11 @@ public class SintakRental {
     //untuk mendapatkan array dari pejabat
     private List<Rental> list;
     //variabel pembantu
-    private int kode;
-    private int kodemem;
-    private String charmem;
-    private int nomem;
-    private String jk;
+    private String kode;
+    private String kodemem;
+    private String kodepeg;
+    private String user;
+    private String userlog;
 
     public SintakRental() {
         try {
@@ -79,7 +79,7 @@ public class SintakRental {
             list = new ArrayList<Rental>();
             while (rs.next()) {
                 Rental pj = new Rental();
-                pj.setKodedvd(rs.getInt("kodedvd"));
+                pj.setKodedvd(rs.getString("kodedvd"));
                 pj.setJudul(rs.getString("judul"));
                 pj.setGenre(rs.getString("genre"));
                 pj.setStatus(rs.getString("status"));
@@ -121,23 +121,57 @@ public class SintakRental {
         return list;
 
     }
-//method untuk generate kode dvd
 
-    public int getKode() {
+    public List<Rental> readpeg() {
         try {
             //membuat statement
-            String sql = "SELECT max( kodedvd ) AS kode FROM dvd ";
             Statement st = con.createStatement();
+            String sql = "SELECT * FROM petugas order by kodepeg desc";
             //mendapatkan data dari tabel dalam bentuk result set
-
             ResultSet rs = st.executeQuery(sql);
+            list = new ArrayList<Rental>();
             while (rs.next()) {
-                kode = rs.getInt("kode");
+                Rental pj = new Rental();
+                pj.setKodepeg(rs.getString("kodepeg"));
+                pj.setNamapeg(rs.getString("namapeg"));
+                pj.setAlamatpeg(rs.getString("alamatpeg"));
+                pj.setTelppeg(rs.getString("telppeg"));
+                pj.setDatepeg(rs.getString("datepeg"));
+                list.add(pj);
+            }
+
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+        return list;
+
+    }
+//method untuk generate kode dvd
+
+    public void setKode(String no) {
+        try {
+            //membuat statement
+            String sql = "SELECT max(kodedvd) AS kode FROM dvd WHERE kodedvd like ?";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, no + "%");
+            //mendapatkan data dari tabel dalam bentuk result set
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                if (rs.getString("kode") != null) {
+                    kode = rs.getString("kode");
+                } else {
+                    kode = no + "00000";
+                }
             }
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
         }
+        this.kode = kode;
+    }
+
+    public String getKode() {
         return kode;
     }
 
@@ -145,12 +179,16 @@ public class SintakRental {
     public void setKodemem(String no) {
         try {
             //membuat statement
-            String sql = "SELECT max(nomem) AS kode FROM member WHERE charmem like ? ";
+            String sql = "SELECT max(kodemem) AS kode FROM member WHERE kodemem like ? ";
             PreparedStatement ps = this.con.prepareStatement(sql);
             ps.setString(1, no + "%");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                kodemem = rs.getInt("kode");
+                if (rs.getString("kode") != null) {
+                    kodemem = rs.getString("kode");
+                } else {
+                    kodemem = no + "00000";
+                }
             }
 
         } catch (SQLException ex) {
@@ -161,45 +199,67 @@ public class SintakRental {
 
     }
 
-    public int getKodemem() {
+    public String getKodemem() {
         return kodemem;
     }
 
-//method untuk generate kode charmem dan nomem
-    public void setCharNo(String no) {
+//method untuk generate kode petugas
+    public void setKodepeg(String no) {
         try {
             //membuat statement
-            String sql = "SELECT charmem,nomem,jk FROM member WHERE kodemem = ? ";
-            System.out.println("no");
+            String sql = "SELECT kodepeg AS kode FROM petugas WHERE kodepeg = ? ";
             PreparedStatement ps = this.con.prepareStatement(sql);
             ps.setString(1, no);
             ResultSet rs = ps.executeQuery();
-            Rental pj = new Rental();
             while (rs.next()) {
-                charmem = rs.getString("charmem");
-                nomem = rs.getInt("nomem");
-                jk = rs.getString("jk");
+                kodepeg = rs.getString("kode");
             }
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
         }
 
-        this.charmem = charmem;
-        this.nomem = nomem;
-        this.jk = jk;
+        this.kodepeg = kodepeg;
+
     }
 
-    public String getCharmem() {
-        return charmem;
+    public String getKodepeg() {
+        return kodepeg;
     }
 
-    public int getNomem() {
-        return nomem;
+//method untuk generate jk member
+    public void cariJK(String no, Rental pj) {
+        try {
+            //membuat statement
+            String sql = "SELECT jk FROM member WHERE kodemem = ? ";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, no);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pj.setJK(rs.getString("jk"));
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
     }
 
-    public String getJK() {
-        return jk;
+//method untuk generate value petugas
+    public void cariValPeg(String no, Rental pj) {
+        try {
+            //membuat statement
+            String sql = "SELECT jkpeg,level FROM petugas WHERE kodepeg = ? ";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, no);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pj.setJKPeg(rs.getString("jkpeg"));
+                pj.setLevelpeg(rs.getString("level"));
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
     }
 
 //method untuk insert ke database
@@ -212,7 +272,7 @@ public class SintakRental {
 
             String sql = "INSERT INTO dvd VALUES(?,?,?,?,?,?)";
             PreparedStatement ps = this.con.prepareStatement(sql);
-            ps.setInt(1, pj.getKodedvd());
+            ps.setString(1, pj.getKodedvd());
             ps.setString(2, pj.getJudul());
             ps.setString(3, thn + "-" + bln + "-" + tgl);
             ps.setString(4, pj.getGenre());
@@ -231,15 +291,38 @@ public class SintakRental {
             String bln = pj.getDatemem().substring(3, 5);
             String tgl = pj.getDatemem().substring(0, 2);
 
-            String sql = "INSERT INTO member VALUES(?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO member VALUES(?,?,?,?,?,?)";
             PreparedStatement ps = this.con.prepareStatement(sql);
             ps.setString(1, pj.getKodemem());
-            ps.setString(2, pj.getCharmem());
-            ps.setInt(3, pj.getNomem());
-            ps.setString(4, pj.getNamamem());
-            ps.setString(5, pj.getAlamatmem());
-            ps.setString(6, pj.getTelpmem());
+            ps.setString(2, pj.getNamamem());
+            ps.setString(3, pj.getAlamatmem());
+            ps.setString(4, pj.getTelpmem());
+            ps.setString(5, pj.getJK());
+            ps.setString(6, thn + "-" + bln + "-" + tgl);
+
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+    }
+
+    public void insertpeg(Rental pj) {
+        try {
+            //Memecah tanggal yang tampilannya dd-mm-yyyy
+            String thn = pj.getDatepeg().substring(6, 10);
+            String bln = pj.getDatepeg().substring(3, 5);
+            String tgl = pj.getDatepeg().substring(0, 2);
+
+            String sql = "INSERT INTO petugas VALUES(?,?,md5(?),?,?,?,?,?)";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, pj.getKodepeg());
+            ps.setString(2, pj.getNamapeg());
+            ps.setString(3, "1234");
+            ps.setString(4, pj.getAlamatpeg());
+            ps.setString(5, pj.getTelppeg());
+            ps.setString(6, pj.getJKPeg());
             ps.setString(7, thn + "-" + bln + "-" + tgl);
+            ps.setString(8, pj.getLevelpeg());
 
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -248,7 +331,7 @@ public class SintakRental {
     }
 
 //method untuk update ke database
-    public void updatedvd(int no, Rental pj) {
+    public void updatedvd(String no, Rental pj) {
         try {
             String sql = "UPDATE dvd set judul=?, stok=?, genre=?, status=? WHERE kodedvd=?";
             PreparedStatement ps = this.con.prepareStatement(sql);
@@ -256,7 +339,7 @@ public class SintakRental {
             ps.setInt(2, pj.getStok());
             ps.setString(3, pj.getGenre());
             ps.setString(4, pj.getStatus());
-            ps.setInt(5, no);
+            ps.setString(5, no);
             ps.executeUpdate();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
@@ -266,12 +349,30 @@ public class SintakRental {
 
     public void updatemem(String no, Rental pj) {
         try {
-            String sql = "UPDATE member set namamem=?, alamatmem=?, telpmem=? WHERE kodemem=?";
+            String sql = "UPDATE member set namamem=?, alamatmem=?, telpmem=?, jk=? WHERE kodemem=?";
             PreparedStatement ps = this.con.prepareStatement(sql);
             ps.setString(1, pj.getNamamem());
             ps.setString(2, pj.getAlamatmem());
             ps.setString(3, pj.getTelpmem());
-            ps.setString(4, no);
+            ps.setString(4, pj.getJK());
+            ps.setString(5, no);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+
+    }
+
+    public void updatepeg(String no, Rental pj) {
+        try {
+            String sql = "UPDATE petugas set namapeg=?, alamatpeg=?, telppeg=?, jkpeg=?, level=? WHERE kodepeg=?";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, pj.getNamapeg());
+            ps.setString(2, pj.getAlamatpeg());
+            ps.setString(3, pj.getTelppeg());
+            ps.setString(4, pj.getJKPeg());
+            ps.setString(5, pj.getLevelpeg());
+            ps.setString(6, no);
             ps.executeUpdate();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
@@ -280,11 +381,11 @@ public class SintakRental {
     }
 
 //method untuk delete database
-    public void deletedvd(int no) {
+    public void deletedvd(String no) {
         try {
             String sql = "DELETE from dvd WHERE kodedvd=?";
             PreparedStatement ps = this.con.prepareStatement(sql);
-            ps.setInt(1, no);
+            ps.setString(1, no);
             ps.executeUpdate();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
@@ -296,6 +397,17 @@ public class SintakRental {
     public void deletemem(String no) {
         try {
             String sql = "DELETE from member WHERE kodemem=?";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, no);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+    }
+
+    public void deletepeg(String no) {
+        try {
+            String sql = "DELETE from petugas WHERE kodepeg=?";
             PreparedStatement ps = this.con.prepareStatement(sql);
             ps.setString(1, no);
             ps.executeUpdate();
@@ -318,7 +430,7 @@ public class SintakRental {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Rental pj = new Rental();
-                pj.setKodedvd(rs.getInt("kodedvd"));
+                pj.setKodedvd(rs.getString("kodedvd"));
                 pj.setJudul(rs.getString("judul"));
                 pj.setGenre(rs.getString("genre"));
                 pj.setStatus(rs.getString("status"));
@@ -359,4 +471,101 @@ public class SintakRental {
         return list;
 
     }
+
+    public List<Rental> readpegall(String no) {
+        try {
+
+            String sql = "SELECT * FROM petugas WHERE kodepeg like ? or namapeg like ? ";
+            list = new ArrayList<Rental>();
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, "%" + no + "%");
+            ps.setString(2, "%" + no + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Rental pj = new Rental();
+                pj.setKodepeg(rs.getString("kodepeg"));
+                pj.setNamapeg(rs.getString("namapeg"));
+                pj.setAlamatpeg(rs.getString("alamatpeg"));
+                pj.setTelppeg(rs.getString("telppeg"));
+                pj.setDatepeg(rs.getString("datepeg"));
+                list.add(pj);
+
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+        return list;
+
+    }
+
+//method untuk verifikasi login user
+    public void verifikasiAkun(String user, String pass, Rental pj) {
+        try {
+            //membuat statement
+            String sql = "SELECT kodepeg,password FROM petugas WHERE kodepeg = ? ";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, user);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pj.setUser(rs.getString("kodepeg"));
+                pj.setPass(rs.getString("password"));
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+    }
+
+//method untuk memasukkan user pass
+    public void userLogin(String user, String date ) {
+        try {
+            //membuat statement
+            String sql = "INSERT INTO login(kodepeg,lastlog) VALUES(?,?)";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, user);
+            ps.setString(2, date);
+           
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+    }    
+ 
+//method untuk mendapatkan login user
+    public void setUser() {
+        try {
+            //membuat statement
+            String sql = "SELECT max(kodepeg)as kode FROM login ";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                userlog=rs.getString("kode");
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+        this.userlog=userlog;
+    } 
+    public String getUser() {
+        return userlog;
+    }
+    
+//method untuk logout
+    public void userLogout(String user, String date) {
+        try {
+            String sql = "UPDATE login set lastout=? WHERE kodepeg=?";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, date);
+            ps.setString(2, user);
+         
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+
+    }
+    
 }
