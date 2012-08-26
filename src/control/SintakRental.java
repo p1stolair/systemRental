@@ -553,6 +553,17 @@ public class SintakRental {
             JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
         }
     }
+
+    public void deletepeg(String no) {
+        try {
+            String sql = "DELETE from petugas WHERE kodepeg=?";
+            PreparedStatement ps = this.con.prepareStatement(sql);
+            ps.setString(1, no);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "kesalahan pada sintak : " + ex);
+        }
+    }
     
     public void delTrans(String no) {
         try {

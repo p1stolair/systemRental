@@ -790,6 +790,49 @@ public class RentalView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenu3MouseClicked
 
+    private void txtKodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtKodeActionPerformed
+        try {
+            dao.connect();
+            dao.setKode(txtKode.getText());
+
+            //generate kode nomember
+            String angka = dao.getKode().substring(1);
+            int digit = Integer.parseInt(angka) + 1;
+
+            txtKode.setEditable(false);
+
+            //generate kode member
+            int jum = String.valueOf(digit).length();
+            int tot = 6 - jum;
+            String nol = "";
+            for (int i = 1; i < tot; i++) {
+                nol = nol + "0";
+            }
+            txtNo.setText(nol + digit);
+
+            txtJudul.requestFocus();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(RentalView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_txtKodeActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+        int konf = JOptionPane.showConfirmDialog(null, "Anda yakin mau logout?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        switch (konf) {
+            case JOptionPane.YES_OPTION:
+                dao.userLogout(txtUserlog.getText(), TglSkrg());
+                new Login().setVisible(true);
+                this.setVisible(false);
+            default:
+            //do nothing
+        }
+    }//GEN-LAST:event_jMenu3MouseClicked
+
     /**
      * @param args the command line arguments
      */
